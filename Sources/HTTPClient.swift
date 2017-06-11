@@ -48,6 +48,9 @@ open class HTTPClient {
                     completionHandler(dict, response, error)
                 } else {
                     print("Cannot deserialize JSON")
+                    if let dataString = String(data: data, encoding: .utf8) {
+                        print(dataString)
+                    }
                     completionHandler([:], response, error)
                 }
             } else {
