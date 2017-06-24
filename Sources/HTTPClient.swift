@@ -10,6 +10,7 @@ public typealias DictCompletionHandler = (_ dict: [String: Any], _ response: URL
 // TODO: consider Kitura-Request instead? -> no!
 // TODO: add support for blocking operations!
 // TODO: avoid extending HTTPClient, compose it instead.
+// TODO: support optional, extensive logging.
 
 open class HTTPClient {
     public init() {
