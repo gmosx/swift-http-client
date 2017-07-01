@@ -7,6 +7,8 @@ public typealias JSONCompletionHandler = (_ dict: [String: Any], _ response: URL
 
 public typealias DictCompletionHandler = (_ dict: [String: Any], _ response: URLResponse?, _ error: Error?) -> Void
 
+public typealias RequestParams = [String: CustomStringConvertible]
+
 // TODO: consider Kitura-Request instead? -> no!
 // TODO: add support for blocking operations!
 // TODO: avoid extending HTTPClient, compose it instead.
