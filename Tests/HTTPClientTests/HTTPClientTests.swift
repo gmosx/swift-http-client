@@ -8,7 +8,6 @@ class HTTPClientTests: XCTestCase {
         XCTAssertEqual(HTTPClient().text, "Hello, World!")
     }
 
-
     static var allTests = [
         ("testExample", testExample),
     ]

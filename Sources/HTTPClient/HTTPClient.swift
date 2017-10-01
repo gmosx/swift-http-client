@@ -1,5 +1,7 @@
 import Foundation
 
+// TODO: Extract JSONHTTPClient?
+
 public typealias DataCompletionHandler = (_ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void
 
 // TODO: deprecate this!
