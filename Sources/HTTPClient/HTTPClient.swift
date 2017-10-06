@@ -1,26 +1,31 @@
 import Foundation
+import KituraRequest
+import KituraNet
+
+//public typealias HTTPClientResponse = URLResponse
+public typealias HTTPClientResponse = ClientResponse
 
 // TODO: Extract JSONHTTPClient?
 
-public typealias DataCompletionHandler = (_ data: Data?, _ response: URLResponse?, _ error: Error?) -> Void
+public typealias DataCompletionHandler = (_ data: Data?, _ response: HTTPClientResponse?, _ error: Swift.Error?) -> Void
 
 // TODO: deprecate this!
-public typealias JSONCompletionHandler = (_ dict: [String: Any], _ response: URLResponse?, _ error: Error?) -> Void
+public typealias JSONCompletionHandler = (_ dict: [String: Any], _ response: HTTPClientResponse?, _ error: Swift.Error?) -> Void
 
-public typealias DictCompletionHandler = (_ dict: [String: Any], _ response: URLResponse?, _ error: Error?) -> Void
+public typealias DictCompletionHandler = (_ dict: [String: Any], _ response: HTTPClientResponse?, _ error: Swift.Error?) -> Void
 
 public typealias RequestParams = [String: CustomStringConvertible]
 
-// TODO: consider Kitura-Request instead? -> no!
 // TODO: add support for blocking operations!
 // TODO: avoid extending HTTPClient, compose it instead.
 // TODO: support optional, extensive logging.
 
+/// Currently uses KituraRequest as URLSession bombs on Linux (!!)
 open class HTTPClient {
     public init() {
     }
 
-    func jsonDataToDictCompletionHandler(data: Data?, response: URLResponse?, error: Error?, completionHandler: @escaping DictCompletionHandler) {
+    func jsonDataToDictCompletionHandler(data: Data?, response: HTTPClientResponse?, error: Swift.Error?, completionHandler: @escaping DictCompletionHandler) {
         if let data = data {
             if let dict = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [String: Any] {
                 completionHandler(dict, response, error)
@@ -40,12 +45,15 @@ open class HTTPClient {
     }
 
     public func get(url: URL, completionHandler: @escaping DataCompletionHandler) {
-        let session = URLSession(configuration: URLSessionConfiguration.default)
-        let task = session.dataTask(with: url, completionHandler: completionHandler)
-        task.resume()
+//        let session = URLSession(configuration: URLSessionConfiguration.default)
+//        let task = session.dataTask(with: url, completionHandler: completionHandler)
+//        task.resume()
+
+         KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
+            completionHandler(data, response, error)
+         }
     }
 
-    // THINK: is this really worth it's weight?
     public func getJSON(url: URL, completionHandler: @escaping JSONCompletionHandler) {
         get(url: url) { data, response, error in
             if let data = data {
@@ -62,25 +70,20 @@ open class HTTPClient {
                 completionHandler([:], response, error)
             }
         }
-        //
-        // KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
-        //     if let data = data,
-        //         let dict = try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)) as? [String: Any] {
-        //         completionHandler(dict, response, error)
-        //     } else {
-        //         completionHandler([:], response, error)
-        //     }
-        // }
     }
 
     public func post(url: URL, data: Data, completionHandler: @escaping DataCompletionHandler) {
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = data
-//        let task = URLSession.shared.dataTask(with: request)
-        let session = URLSession(configuration: URLSessionConfiguration.default)
-        let task = session.dataTask(with: request, completionHandler: completionHandler)
-        task.resume()
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.httpBody = data
+////        let task = URLSession.shared.dataTask(with: request)
+//        let session = URLSession(configuration: URLSessionConfiguration.default)
+//        let task = session.dataTask(with: request, completionHandler: completionHandler)
+//        task.resume()
+        
+//        KituraRequest.request(.post, url.absoluteString).response { request, response, data, error in
+//            completionHandler(data, response, error)
+//        }
     }
 
     public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
