@@ -44,18 +44,31 @@ open class HTTPClient {
         }
     }
 
-    public func get(url: URL, completionHandler: @escaping DataCompletionHandler) {
+    // TODO: add `headers` and `parameters` argument
+    
+    public func get(url: URL, parameters: [String: Any]? = nil, completionHandler: @escaping DataCompletionHandler) {
 //        let session = URLSession(configuration: URLSessionConfiguration.default)
 //        let task = session.dataTask(with: url, completionHandler: completionHandler)
 //        task.resume()
 
-         KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "GET"
+////        let task = URLSession.shared.dataTask(with: request)
+//        let session = URLSession(configuration: URLSessionConfiguration.default)
+//        let task = session.dataTask(with: request, completionHandler: completionHandler)
+//        task.resume()
+        
+        // TODO: handle parameters
+
+        KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
             completionHandler(data, response, error)
-         }
+        }
     }
 
-    public func getJSON(url: URL, completionHandler: @escaping JSONCompletionHandler) {
-        get(url: url) { data, response, error in
+    public func getJSON(url: URL, parameters: [String: Any]? = nil, completionHandler: @escaping JSONCompletionHandler) {
+        // TODO: handle parameters
+
+        get(url: url, parameters: parameters) { data, response, error in
             if let data = data {
                 if let dict = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [String: Any] {
                     completionHandler(dict, response, error)
@@ -71,29 +84,38 @@ open class HTTPClient {
             }
         }
     }
-
-    public func post(url: URL, data: Data, completionHandler: @escaping DataCompletionHandler) {
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "POST"
-//        request.httpBody = data
-////        let task = URLSession.shared.dataTask(with: request)
-//        let session = URLSession(configuration: URLSessionConfiguration.default)
-//        let task = session.dataTask(with: request, completionHandler: completionHandler)
-//        task.resume()
-        
-//        KituraRequest.request(.post, url.absoluteString).response { request, response, data, error in
-//            completionHandler(data, response, error)
-//        }
-    }
-
-    public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
-        if let requestData = try? JSONSerialization.data(withJSONObject: dict) {
-            post(url: url, data: requestData) { responseData, response, error in
-                self.jsonDataToDictCompletionHandler(data: responseData, response: response, error: error, completionHandler: completionHandler)
-            }
-        } else {
-            print("Cannot serialize to JSON")
-            print(dict)
+    
+    // TODO: https://stackoverflow.com/questions/26364914/http-request-in-swift-with-post-method
+    // TODO: pass parameters!
+    
+    public func post(url: URL, parameters: [String: Any]?, completionHandler: @escaping DataCompletionHandler) {
+        KituraRequest.request(.post, url.absoluteString, parameters: parameters).response { request, response, data, error in
+            completionHandler(data, response, error)
         }
     }
+    
+//    public func post(url: URL, data: Data, completionHandler: @escaping DataCompletionHandler) {
+////        var request = URLRequest(url: url)
+////        request.httpMethod = "POST"
+////        request.httpBody = data
+//////        let task = URLSession.shared.dataTask(with: request)
+////        let session = URLSession(configuration: URLSessionConfiguration.default)
+////        let task = session.dataTask(with: request, completionHandler: completionHandler)
+////        task.resume()
+//        
+////        KituraRequest.request(.post, url.absoluteString).response { request, response, data, error in
+////            completionHandler(data, response, error)
+////        }
+//    }
+//
+//    public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
+////        if let requestData = try? JSONSerialization.data(withJSONObject: dict) {
+////            post(url: url, data: requestData) { responseData, response, error in
+////                self.jsonDataToDictCompletionHandler(data: responseData, response: response, error: error, completionHandler: completionHandler)
+////            }
+////        } else {
+////            print("Cannot serialize to JSON")
+////            print(dict)
+////        }
+//    }
 }
