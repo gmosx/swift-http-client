@@ -95,7 +95,9 @@ open class HTTPClient {
     }
 
     public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
-        // TODO: placeholder, implement me!
+        KituraRequest.request(.post, url.absoluteString, parameters: dict, encoding: JSONEncoding.default).response { request, response, data, error in
+            self.jsonDataToDictCompletionHandler(data: data, response: response, error: error, completionHandler: completionHandler)
+        }
     }
 
 //    public func post(url: URL, data: Data, completionHandler: @escaping DataCompletionHandler) {
