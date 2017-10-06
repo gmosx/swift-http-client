@@ -45,7 +45,7 @@ open class HTTPClient {
     }
 
     // TODO: add `headers` and `parameters` argument
-    
+
     public func get(url: URL, parameters: [String: Any]? = nil, completionHandler: @escaping DataCompletionHandler) {
 //        let session = URLSession(configuration: URLSessionConfiguration.default)
 //        let task = session.dataTask(with: url, completionHandler: completionHandler)
@@ -57,7 +57,7 @@ open class HTTPClient {
 //        let session = URLSession(configuration: URLSessionConfiguration.default)
 //        let task = session.dataTask(with: request, completionHandler: completionHandler)
 //        task.resume()
-        
+
         // TODO: handle parameters
 
         KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
@@ -84,16 +84,20 @@ open class HTTPClient {
             }
         }
     }
-    
+
     // TODO: https://stackoverflow.com/questions/26364914/http-request-in-swift-with-post-method
     // TODO: pass parameters!
-    
+
     public func post(url: URL, parameters: [String: Any]?, completionHandler: @escaping DataCompletionHandler) {
         KituraRequest.request(.post, url.absoluteString, parameters: parameters).response { request, response, data, error in
             completionHandler(data, response, error)
         }
     }
-    
+
+    public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
+        // TODO: placeholder, implement me!
+    }
+
 //    public func post(url: URL, data: Data, completionHandler: @escaping DataCompletionHandler) {
 ////        var request = URLRequest(url: url)
 ////        request.httpMethod = "POST"
@@ -102,7 +106,7 @@ open class HTTPClient {
 ////        let session = URLSession(configuration: URLSessionConfiguration.default)
 ////        let task = session.dataTask(with: request, completionHandler: completionHandler)
 ////        task.resume()
-//        
+//
 ////        KituraRequest.request(.post, url.absoluteString).response { request, response, data, error in
 ////            completionHandler(data, response, error)
 ////        }
