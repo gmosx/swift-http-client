@@ -25,7 +25,7 @@ open class HTTPClient {
     public init() {
     }
 
-    func jsonDataToDictCompletionHandler(data: Data?, response: HTTPClientResponse?, error: Swift.Error?, completionHandler: @escaping DictCompletionHandler) {
+    public func jsonDataToDictCompletionHandler(data: Data?, response: HTTPClientResponse?, error: Swift.Error?, completionHandler: @escaping DictCompletionHandler) {
         if let data = data {
             if let dict = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [String: Any] {
                 completionHandler(dict, response, error)
@@ -88,14 +88,16 @@ open class HTTPClient {
     // TODO: https://stackoverflow.com/questions/26364914/http-request-in-swift-with-post-method
     // TODO: pass parameters!
 
-    public func post(url: URL, parameters: [String: Any]?, completionHandler: @escaping DataCompletionHandler) {
-        KituraRequest.request(.post, url.absoluteString, parameters: parameters).response { request, response, data, error in
+    public func post(url: URL, headers: [String: String]? = nil,
+                     parameters: [String: Any]? = nil,
+                     completionHandler: @escaping DataCompletionHandler) {
+        KituraRequest.request(.post, url.absoluteString, parameters: parameters, headers: headers).response { request, response, data, error in
             completionHandler(data, response, error)
         }
     }
 
-    public func postJSON(url: URL, dict: [String: Any], completionHandler: @escaping DictCompletionHandler) {
-        KituraRequest.request(.post, url.absoluteString, parameters: dict, encoding: JSONEncoding.default).response { request, response, data, error in
+    public func postJSON(url: URL, headers: [String: String]? = nil, parameters: [String: Any]? = nil, completionHandler: @escaping DictCompletionHandler) {
+        KituraRequest.request(.post, url.absoluteString, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { request, response, data, error in
             self.jsonDataToDictCompletionHandler(data: data, response: response, error: error, completionHandler: completionHandler)
         }
     }
