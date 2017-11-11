@@ -1,4 +1,5 @@
 import Foundation
+import LoggerAPI
 import KituraRequest
 import KituraNet
 
@@ -46,7 +47,10 @@ open class HTTPClient {
 
     // TODO: add `headers` and `parameters` argument
 
-    public func get(url: URL, parameters: [String: Any]? = nil, completionHandler: @escaping DataCompletionHandler) {
+    public func get(url: URL,
+                    headers: [String: String]? = nil,
+                    parameters: [String: Any]? = nil,
+                    completionHandler: @escaping DataCompletionHandler) {
 //        let session = URLSession(configuration: URLSessionConfiguration.default)
 //        let task = session.dataTask(with: url, completionHandler: completionHandler)
 //        task.resume()
@@ -60,18 +64,28 @@ open class HTTPClient {
 
         // TODO: handle parameters
 
-        KituraRequest.request(.get, url.absoluteString).response { request, response, data, error in
+        Log.debug("GET \(url.absoluteString)")
+        KituraRequest.request(.get, url.absoluteString, headers: headers).response { request, response, data, error in
             completionHandler(data, response, error)
         }
     }
 
-    public func getJSON(url: URL, parameters: [String: Any]? = nil, completionHandler: @escaping JSONCompletionHandler) {
+    public func getJSON(url: URL,
+                        headers: [String: String]? = nil,
+                        parameters: [String: Any]? = nil,
+                        completionHandler: @escaping JSONCompletionHandler) {
         // TODO: handle parameters
 
-        get(url: url, parameters: parameters) { data, response, error in
+        get(url: url, headers: headers, parameters: parameters) { data, response, error in
             if let data = data {
-                if let dict = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0))) as? [String: Any] {
-                    completionHandler(dict, response, error)
+                if let json = try? JSONSerialization.jsonObject(with: data, options: [.allowFragments]) {
+                    if let dict = json as? [String: Any] {
+                        completionHandler(dict, response, error)
+                    } else if let array = json as? [Any] {
+                        // TODO: temp solution, think what to do
+                        completionHandler(["result": array], response, error)
+                    }
+                    // TODO: any additional cases to be handled here?
                 } else {
                     print("Cannot deserialize JSON")
                     if let dataString = String(data: data, encoding: .utf8) {
@@ -88,9 +102,11 @@ open class HTTPClient {
     // TODO: https://stackoverflow.com/questions/26364914/http-request-in-swift-with-post-method
     // TODO: pass parameters!
 
-    public func post(url: URL, headers: [String: String]? = nil,
+    public func post(url: URL,
+                     headers: [String: String]? = nil,
                      parameters: [String: Any]? = nil,
                      completionHandler: @escaping DataCompletionHandler) {
+        Log.debug("POST \(url.absoluteString)")
         KituraRequest.request(.post, url.absoluteString, parameters: parameters, headers: headers).response { request, response, data, error in
             completionHandler(data, response, error)
         }
