@@ -17,7 +17,6 @@ public typealias DictCompletionHandler = (_ dict: [String: Any], _ response: HTT
 
 public typealias RequestParams = [String: CustomStringConvertible]
 
-
 func jsonDataToDictCompletionHandler(data: Data?, response: HTTPClientResponse?, error: Swift.Error?, completionHandler: @escaping  DictCompletionHandler) {
     if let data = data {
         if let json = try? JSONSerialization.jsonObject(with: data, options: [.allowFragments]) {
