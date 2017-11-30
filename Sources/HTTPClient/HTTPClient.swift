@@ -93,8 +93,8 @@ open class HTTPClient {
                      headers: [String: String]? = nil,
                      parameters: [String: Any]? = nil,
                      completionHandler: @escaping DataCompletionHandler) {
-        Log.debug("POST \(url.absoluteString)")
-        KituraRequest.request(.post, url.absoluteString, parameters: parameters, headers: headers).response { request, response, data, error in
+        Log.debug("POST \(url.absoluteString) parameters: \(parameters ?? [:])")
+        KituraRequest.request(.post, url.absoluteString, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { request, response, data, error in
             completionHandler(data, response, error)
         }
     }
