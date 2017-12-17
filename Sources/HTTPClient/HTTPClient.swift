@@ -92,16 +92,22 @@ open class HTTPClient {
     public func post(url: URL,
                      headers: [String: String]? = nil,
                      parameters: [String: Any]? = nil,
+                     encoding: Encoding = JSONEncoding.default,
                      completionHandler: @escaping DataCompletionHandler) {
         Log.debug("POST \(url.absoluteString) parameters: \(parameters ?? [:])")
-        KituraRequest.request(.post, url.absoluteString, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { request, response, data, error in
+        KituraRequest.request(.post, url.absoluteString, parameters: parameters, encoding: encoding, headers: headers).response { request, response, data, error in
             completionHandler(data, response, error)
         }
     }
 
-    // TODO:
-    public func postJSON(url: URL, headers: [String: String]? = nil, parameters: [String: Any]? = nil, completionHandler: @escaping DictCompletionHandler) {
-        post(url: url, headers: headers, parameters: parameters) { data, response, error in
+    // TODO: The name is confusing, it means that the return value is JSON, not that
+    // we post json! The post encoding is controlled by the encoding parameter!
+    public func postJSON(url: URL,
+                         headers: [String: String]? = nil,
+                         parameters: [String: Any]? = nil,
+                         encoding: Encoding = JSONEncoding.default,
+                         completionHandler: @escaping DictCompletionHandler) {
+        post(url: url, headers: headers, parameters: parameters, encoding: encoding) { data, response, error in
             jsonDataToDictCompletionHandler(data: data, response: response, error: error, completionHandler: completionHandler)
         }
 //        KituraRequest.request(.post, url.absoluteString, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { request, response, data, error in
