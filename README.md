@@ -1,1 +1,3 @@
-Use KituraRequest or URLSession instead?
+# HTTPClient
+
+A simple HTTP client library.
